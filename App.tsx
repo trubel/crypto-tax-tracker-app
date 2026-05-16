@@ -1,35 +1,24 @@
 import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ServerSetupScreen from './src/screens/Onboarding/ServerSetupScreen';
+import TabNavigator from './src/navigation/TabNavigator';
 import { useServerStore } from './src/store/serverStore';
 
-export type RootStackParamList = {
-  ServerSetup: undefined;
-  Main: undefined;
-};
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const { serverUrl } = useServerStore();
+  const { serverUrl, isConfigured } = useServerStore();
 
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {!serverUrl ? (
-            <Stack.Screen name="ServerSetup" component={ServerSetupScreen} />
-          ) : (
-            <Stack.Screen name="Main" component={MainNavigator} />
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {!isConfigured ? (
+          <Stack.Screen name="ServerSetup" component={ServerSetupScreen} />
+        ) : (
+          <Stack.Screen name="Main" component={TabNavigator} />
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
-
-function MainNavigator() {
-  return null; // Will be implemented with tabs
 }
